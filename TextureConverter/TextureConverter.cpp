@@ -1,5 +1,8 @@
 #include "TextureConverter.h"
-#include <stringapiset.h>
+
+#include <dxgidebug.h>
+#include <dxcapi.h>
+
 
 void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath){
 
@@ -13,8 +16,9 @@ void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath){
 
 void TextureConverter::LoadWICTextureFromFile(const std::string& filePath){
 
-	//1.ファイルパスをワイド文字列に変換
 
+	//1.ファイルパスをワイド文字列に変換
+	std::wstring wideFilepath = ConvertMultiByteStringToWideString(filePath);
 
 	//2.テクスチャを読み込む
 
@@ -28,7 +32,7 @@ std::wstring TextureConverter::ConvertMultiByteStringToWideString(const std::str
 		return std::wstring();
 	}
 
-	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&string[0]), static_cast<int>(string.size()), NULL, 0);
+	int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&string[0]), static_cast<int>(string.size()), NULL, 0);
 	if (sizeNeeded == 0)
 	{
 		return std::wstring();

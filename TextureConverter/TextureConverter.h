@@ -37,5 +37,6 @@ private:
 	static std::wstring ConvertMultiByteStringToWideString(const std::string& string);
 
 
+
 };
 
