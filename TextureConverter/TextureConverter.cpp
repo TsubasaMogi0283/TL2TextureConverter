@@ -4,6 +4,7 @@
 #include <dxcapi.h>
 
 
+
 void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath){
 
 	//1.テクスチャファイルを読み込む
@@ -21,7 +22,9 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& filePath){
 	std::wstring wideFilepath = ConvertMultiByteStringToWideString(filePath);
 
 	//2.テクスチャを読み込む
-
+	//WICテクスチャのロード
+	HRESULT hr = DirectX::LoadFromWICFile(wideFilepath.c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &metadata_, scratchImage_);
+	assert(SUCCEEDED(hr));
 
 }
 

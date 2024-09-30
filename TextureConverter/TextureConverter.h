@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <DirectXTex.h>
+
 
 class TextureConverter{
 public:
@@ -36,6 +38,13 @@ private:
 	/// <returns></returns>
 	static std::wstring ConvertMultiByteStringToWideString(const std::string& string);
 
+
+private:
+	//画像の情報
+	DirectX::TexMetadata metadata_;
+
+	//画像イメージのコンテナ
+	DirectX::ScratchImage scratchImage_;
 
 
 };
