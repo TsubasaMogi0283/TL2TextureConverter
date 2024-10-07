@@ -16,6 +16,9 @@ enum Argument {
 	//渡されたファイルのパス
 	FilPath,
 
+
+	//最後にこれを書いておくと要素数がすぐに分かるよ！
+	//書いておくと便利！！
 	ArgumentNumber,
 };
 

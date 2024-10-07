@@ -97,6 +97,20 @@ void TextureConverter::SeparateFilePath(const std::wstring& filePath){
 }
 
 void TextureConverter::SaveDDSTextureToFile(){
+
+	DirectX::ScratchImage mipChain;
+	//ミップマップの生成
+	HRESULT hResult = DirectX::GenerateMipMaps(
+		scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
+	if (SUCCEEDED(hResult)) {
+		//イメージとメタデータをミップマップで置き換える
+		//以下のようにコピーが禁止されているのでmoveで
+		//ScratchImage(const ScratchImage&) = delete;
+		//ScratchImage& operator=(const ScratchImage&) = delete;
+		scratchImage_ = std::move(mipChain);
+		metadata_ = scratchImage_.GetMetadata();
+	}
+
 	//フォーマットの変換
 	//中身はただのswitch文で書き換えているだけだった
 	metadata_.format = DirectX::MakeSRGB(metadata_.format);
@@ -105,7 +119,7 @@ void TextureConverter::SaveDDSTextureToFile(){
 	std::wstring filePath = directoryPath_ + fileName_ + L".dds";
 	
 	//DDSファイルの書き出し
-	HRESULT hResult =DirectX::SaveToDDSFile(
+	hResult =DirectX::SaveToDDSFile(
 		scratchImage_.GetImages(),scratchImage_.GetImageCount(),metadata_, DirectX::DDS_FLAGS_NONE,filePath.c_str());
 	assert(SUCCEEDED(hResult));
 }
