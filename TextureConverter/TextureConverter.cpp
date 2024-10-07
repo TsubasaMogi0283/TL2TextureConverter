@@ -98,18 +98,30 @@ void TextureConverter::SeparateFilePath(const std::wstring& filePath){
 
 void TextureConverter::SaveDDSTextureToFile(){
 
-	DirectX::ScratchImage mipChain;
-	//ミップマップの生成
-	HRESULT hResult = DirectX::GenerateMipMaps(
-		scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
+	//DirectX::ScratchImage mipChain;
+	////ミップマップの生成
+	//HRESULT hResult = DirectX::GenerateMipMaps(
+	//	scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
+	//if (SUCCEEDED(hResult)) {
+	//	//イメージとメタデータをミップマップで置き換える
+	//	//以下のようにコピーが禁止されているのでmoveで
+	//	//ScratchImage(const ScratchImage&) = delete;
+	//	//ScratchImage& operator=(const ScratchImage&) = delete;
+	//	scratchImage_ = std::move(mipChain);
+	//	metadata_ = scratchImage_.GetMetadata();
+	//}
+
+
+	//圧縮形式に変換
+	DirectX::ScratchImage converted;
+	HRESULT hResult = DirectX::Compress(
+		scratchImage_.GetImages(), scratchImage_.GetImageCount(), metadata_,DXGI_FORMAT_BC7_UNORM_SRGB,
+		DirectX::TEX_COMPRESS_BC7_QUICK|DirectX::TEX_COMPRESS_SRGB_OUT|DirectX::TEX_COMPRESS_PARALLEL,1.0f,converted);
 	if (SUCCEEDED(hResult)) {
-		//イメージとメタデータをミップマップで置き換える
-		//以下のようにコピーが禁止されているのでmoveで
-		//ScratchImage(const ScratchImage&) = delete;
-		//ScratchImage& operator=(const ScratchImage&) = delete;
-		scratchImage_ = std::move(mipChain);
+		scratchImage_ = std::move(converted);
 		metadata_ = scratchImage_.GetMetadata();
 	}
+
 
 	//フォーマットの変換
 	//中身はただのswitch文で書き換えているだけだった
