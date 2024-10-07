@@ -49,8 +49,8 @@ int main(int argc,char*argv[]) {
 	//COMライブラリの終了
 	CoUninitialize();
 
-	//リターンする前にpauseを入れると良いよ！
-	//ログの確認がしやすいから
-	system("pause");
+	
+
+	
 	return 0;
 }
