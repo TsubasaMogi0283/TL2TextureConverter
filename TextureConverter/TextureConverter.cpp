@@ -4,14 +4,13 @@
 #include <dxcapi.h>
 
 
-
 void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath){
 
 	//1.テクスチャファイルを読み込む
 	LoadWICTextureFromFile(filePath);
 
 	//2.DDS形式に変換して書き出す
-
+	SaveDDSTextureToFile();
 
 }
 
@@ -25,6 +24,11 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& filePath){
 	//WICテクスチャのロード
 	HRESULT hr = DirectX::LoadFromWICFile(wideFilepath.c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &metadata_, scratchImage_);
 	assert(SUCCEEDED(hr));
+
+	//フォルダパスとファイル名を分離する
+	SeparateFilePath(wideFilepath);
+
+	
 
 }
 
@@ -50,7 +54,7 @@ void TextureConverter::SeparateFilePath(const std::wstring& filePath){
 	std::wstring exceptExt;
 
 
-	//「.」が出てキル最後の部分を探す
+	//「.」が出てくる最後の部分を探す
 	pointPosition = filePath.rfind('.');
 	if (pointPosition != std::wstring::npos) {
 		//区切り文字の後ろをファイル拡張子として保存
@@ -76,10 +80,32 @@ void TextureConverter::SeparateFilePath(const std::wstring& filePath){
 
 
 
-	//区切り文字「/」が出てくる最後の部分を探す
+	//「/」が出てくる最後の部分を探す
 	pointPosition = exceptExt.rfind('/');
 	if (pointPosition != std::wstring::npos) {
-
+		//区切り文字の前までをディレクトリパスとして保存
+		directoryPath_ = exceptExt.substr(0, pointPosition + 1);
+		//区切り文字の前までを抜き出す
+		fileName_ = exceptExt.substr(pointPosition + 1, exceptExt.size() - pointPosition - 1);
+		return;
 	}
 
+	//区切り文字がないのでファイル名のみとして扱う
+	directoryPath_ = L"";
+	fileName_ = exceptExt;
+
+}
+
+void TextureConverter::SaveDDSTextureToFile(){
+	//フォーマットの変換
+	//中身はただのswitch文で書き換えているだけだった
+	metadata_.format = DirectX::MakeSRGB(metadata_.format);
+
+	//出力ファイル名を設定する
+	std::wstring filePath = directoryPath_ + fileName_ + L".dds";
+	
+	//DDSファイルの書き出し
+	HRESULT hResult =DirectX::SaveToDDSFile(
+		scratchImage_.GetImages(),scratchImage_.GetImageCount(),metadata_, DirectX::DDS_FLAGS_NONE,filePath.c_str());
+	assert(SUCCEEDED(hResult));
 }
