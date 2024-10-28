@@ -2,15 +2,15 @@
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
+#include <iostream>
 
-
-void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath){
+void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath, int optionNumber, char* options[]){
 
 	//1.テクスチャファイルを読み込む
 	LoadWICTextureFromFile(filePath);
 
 	//2.DDS形式に変換して書き出す
-	SaveDDSTextureToFile();
+	SaveDDSTextureToFile(optionNumber,options);
 
 }
 
@@ -96,20 +96,29 @@ void TextureConverter::SeparateFilePath(const std::wstring& filePath){
 
 }
 
-void TextureConverter::SaveDDSTextureToFile(){
+void TextureConverter::SaveDDSTextureToFile(int optionsNumber, char* options[]){
+	size_t mipLevel = 0;
 
-	//DirectX::ScratchImage mipChain;
-	////ミップマップの生成
-	//HRESULT hResult = DirectX::GenerateMipMaps(
-	//	scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
-	//if (SUCCEEDED(hResult)) {
-	//	//イメージとメタデータをミップマップで置き換える
-	//	//以下のようにコピーが禁止されているのでmoveで
-	//	//ScratchImage(const ScratchImage&) = delete;
-	//	//ScratchImage& operator=(const ScratchImage&) = delete;
-	//	scratchImage_ = std::move(mipChain);
-	//	metadata_ = scratchImage_.GetMetadata();
-	//}
+	for (int i = 0; i < optionsNumber; ++i) {
+		if (std::string (options[i])=="-ml") {
+			//ミップマップレベル指定
+			mipLevel = std::stoi(options[i + 1]);
+			break;
+		}
+	}
+
+	DirectX::ScratchImage mipChain;
+	//ミップマップの生成
+	HRESULT hResult = DirectX::GenerateMipMaps(
+		scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, mipLevel, mipChain);
+	if (SUCCEEDED(hResult)) {
+		//イメージとメタデータをミップマップで置き換える
+		//以下のようにコピーが禁止されているのでmoveで
+		//ScratchImage(const ScratchImage&) = delete;
+		//ScratchImage& operator=(const ScratchImage&) = delete;
+		scratchImage_ = std::move(mipChain);
+		metadata_ = scratchImage_.GetMetadata();
+	}
 
 
 	//圧縮形式に変換
@@ -134,4 +143,13 @@ void TextureConverter::SaveDDSTextureToFile(){
 	hResult =DirectX::SaveToDDSFile(
 		scratchImage_.GetImages(),scratchImage_.GetImageCount(),metadata_, DirectX::DDS_FLAGS_NONE,filePath.c_str());
 	assert(SUCCEEDED(hResult));
+}
+
+void TextureConverter::OutputUsage(){
+
+	std::cout << "画像ファイルをWIC形式からDDC形式に変換します" << std::endl;
+	std::cout << "TextureConverter[ドライブ:][パス][ファイル名]" << std::endl;
+	std::cout << "[ドライブ:][パス][ファイル名]:変換したいWIC形式の画像ファイルを指定します" << std::endl;
+
+
 }

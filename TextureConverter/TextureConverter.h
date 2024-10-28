@@ -3,7 +3,7 @@
 #include <DirectXTex.h>
 
 
-class TextureConverter{
+class TextureConverter {
 public:
 	/// <summary>
 	/// コンストラクタ
@@ -13,8 +13,10 @@ public:
 	/// <summary>
 	/// テクスチャをWICからDDSに変換する
 	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void ConvertTextureWICToDDS(const std::string& filePath);
+	/// <param name="filePath"></param>
+	/// <param name="optionNumber"></param>
+	/// <param name="options"></param>
+	void ConvertTextureWICToDDS(const std::string& filePath,int optionNumber,char* options[]);
 
 	/// <summary>
 	/// デストラクタ
@@ -48,20 +50,27 @@ private:
 	/// <summary>
 	/// DDSテクスチャとしてファイル書き出し
 	/// </summary>
-	void SaveDDSTextureToFile();
+	/// <param name="optionsNumber"></param>
+	/// <param name="options"></param>
+	void SaveDDSTextureToFile(int optionsNumber,char* options[]);
+
+	/// <summary>
+	/// 使用方法を出力(表示)する
+	/// </summary>
+	static void OutputUsage();
 
 private:
 	//画像の情報
-	DirectX::TexMetadata metadata_;
+	DirectX::TexMetadata metadata_ ={};
 	//画像イメージのコンテナ
-	DirectX::ScratchImage scratchImage_;
+	DirectX::ScratchImage scratchImage_ = {};
 
 	//ディレクトリパス
-	std::wstring directoryPath_;
+	std::wstring directoryPath_ = {};
 	//ファイル名
-	std::wstring fileName_;
+	std::wstring fileName_ = {};
 	//ファイル拡張子
-	std::wstring fileExt_;
+	std::wstring fileExt_ = {};
 
 
 };

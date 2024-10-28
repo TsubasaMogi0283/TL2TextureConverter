@@ -31,14 +31,20 @@ int main(int argc,char*argv[]) {
 
 
 	//COMライブラリの初期化
-	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-	assert(SUCCEEDED(hr));
+	HRESULT hResult = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	assert(SUCCEEDED(hResult));
 
 	//テクスチャコンバーターのインスタンスを生成
 	TextureConverter textureConverter;
 
+	//オプションの数
+	int optionsNumber = argc - ArgumentNumber;
+	//オプション配列(ダブルポインタ)
+	char** options = argv + ArgumentNumber;
+
+
 	//変換を行う
-	textureConverter.ConvertTextureWICToDDS(argv[FilPath]);
+	textureConverter.ConvertTextureWICToDDS(argv[FilPath],optionsNumber,options);
 
 
 	for (int i = 0; i < argc; i++) {
