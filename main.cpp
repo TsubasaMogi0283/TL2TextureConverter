@@ -27,7 +27,13 @@ enum Argument {
 int main(int argc,char*argv[]) {
 
 	//2以上になることは基本無いよ
-	assert(argc >= ArgumentNumber);
+	//assert(argc >= ArgumentNumber);
+
+	if (argc < ArgumentNumber) {
+		//使い方を表示する
+		TextureConverter::OutputUsage();
+		return 0;
+	}
 
 
 	//COMライブラリの初期化

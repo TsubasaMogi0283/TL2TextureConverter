@@ -1,6 +1,6 @@
 
 $files = Get-Item *.jpg
 foreach($f in $files){
-    Start-Process -FilePath TL2TextureConverter.exe -ArgumentList $f -Wait
+    Start-Process -FilePath TL2TextureConverter.exe -ArgumentList "$f -ml 3" -Wait
 }
 

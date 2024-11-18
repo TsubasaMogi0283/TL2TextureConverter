@@ -19,6 +19,11 @@ public:
 	void ConvertTextureWICToDDS(const std::string& filePath,int optionNumber,char* options[]);
 
 	/// <summary>
+	/// 使用方法を出力(表示)する
+	/// </summary>
+	static void OutputUsage();
+
+	/// <summary>
 	/// デストラクタ
 	/// </summary>
 	~TextureConverter() = default;
@@ -54,10 +59,7 @@ private:
 	/// <param name="options"></param>
 	void SaveDDSTextureToFile(int optionsNumber,char* options[]);
 
-	/// <summary>
-	/// 使用方法を出力(表示)する
-	/// </summary>
-	static void OutputUsage();
+	
 
 private:
 	//画像の情報
