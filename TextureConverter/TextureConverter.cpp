@@ -28,8 +28,6 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& filePath){
 	//フォルダパスとファイル名を分離する
 	SeparateFilePath(wideFilepath);
 
-	
-
 }
 
 std::wstring TextureConverter::ConvertMultiByteStringToWideString(const std::string& string){
