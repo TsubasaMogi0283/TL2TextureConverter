@@ -3,6 +3,8 @@
 #include <dxgidebug.h>
 #include <dxcapi.h>
 #include <iostream>
+#include <locale>
+#include <codecvt>
 
 void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath, int optionNumber, char* options[]){
 
@@ -31,20 +33,10 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& filePath){
 }
 
 std::wstring TextureConverter::ConvertMultiByteStringToWideString(const std::string& string){
-
-	if (string.empty())
-	{
-		return std::wstring();
-	}
-
-	int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&string[0]), static_cast<int>(string.size()), NULL, 0);
-	if (sizeNeeded == 0)
-	{
-		return std::wstring();
-	}
-	std::wstring result(sizeNeeded, 0);
-	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&string[0]), static_cast<int>(string.size()), &result[0], sizeNeeded);
-	return result;
+	int size_needed = MultiByteToWideChar(CP_ACP, 0, string.c_str(), (int)string.size(), NULL, 0);
+	std::wstring wideString(size_needed, 0);
+	MultiByteToWideChar(CP_ACP, 0, string.c_str(), (int)string.size(), &wideString[0], size_needed);
+	return wideString;
 }
 
 void TextureConverter::SeparateFilePath(const std::wstring& filePath){
